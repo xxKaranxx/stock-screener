@@ -2,14 +2,17 @@ name: Run Screener Every Minute
 
 on:
   schedule:
-    - cron: '15-30 3-9 * * 1-5' # UTC: Every minute from 09:15 to 15:30 IST (03:45 to 10:00 UTC)
-  workflow_dispatch:  # Allow manual run
+    # Run every minute between 09:15 and 15:30 IST (03:45–10:00 UTC)
+    - cron: '45-59 3 * * 1-5'
+    - cron: '0-59 4-9 * * 1-5'
+    - cron: '0-30 10 * * 1-5'
+  workflow_dispatch:  # Optional: Allows manual run
 
 jobs:
   run-script:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
+      - name: Checkout Code
         uses: actions/checkout@v3
 
       - name: Set up Python
@@ -20,11 +23,11 @@ jobs:
       - name: Install Dependencies
         run: pip install requests selenium
 
-      - name: Download Chrome Driver
+      - name: Install Chrome and Chromedriver
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium-chromedriver
-          sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+          sudo ln -s /usr/bin/chromedriver /usr/local/bin/chromedriver
 
       - name: Run Screener Script
         run: python run_screener.py
